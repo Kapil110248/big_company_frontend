@@ -28,7 +28,6 @@ import {
   DollarOutlined,
   ClockCircleOutlined,
   EyeOutlined,
-  ArrowLeftOutlined,
 } from '@ant-design/icons';
 import { wholesalerApi } from '../../services/apiService';
 
@@ -62,6 +61,9 @@ interface RetailerOrder {
   confirmedAt?: string;
   shippedAt?: string;
   deliveredAt?: string;
+  tracking_number?: string;
+  delivery_notes?: string;
+  rejection_reason?: string;
   retailer: {
     shopName: string;
     user: {
@@ -212,7 +214,7 @@ const OrdersPage = () => {
     }
   };
 
-  const handleConfirmDelivery = async (order: RetailerOrder) => {
+  const handleDeliverOrder = async (order: RetailerOrder) => {
     try {
       await wholesalerApi.confirmDelivery(order.id);
       message.success(`Order ${order.orderNumber} delivered`);
@@ -521,7 +523,7 @@ const OrdersPage = () => {
 
       {/* Confirm Modal */}
       <Modal
-        title={`Confirm Order ${selectedOrder?.order_number}`}
+        title={`Confirm Order ${selectedOrder?.orderNumber}`}
         open={confirmModalOpen}
         onCancel={() => {
           setConfirmModalOpen(false);
@@ -534,12 +536,12 @@ const OrdersPage = () => {
         <p>Are you sure you want to confirm this order?</p>
         {selectedOrder && (
           <Descriptions column={1} size="small">
-            <Descriptions.Item label="Retailer">{selectedOrder.retailer_name}</Descriptions.Item>
-            <Descriptions.Item label="Items">{selectedOrder.items_count}</Descriptions.Item>
-            <Descriptions.Item label="Total">{selectedOrder.total?.toLocaleString()} RWF</Descriptions.Item>
+            <Descriptions.Item label="Retailer">{selectedOrder.retailer.shopName}</Descriptions.Item>
+            <Descriptions.Item label="Items">{selectedOrder.items?.length || 0}</Descriptions.Item>
+            <Descriptions.Item label="Total">{selectedOrder.totalAmount?.toLocaleString()} RWF</Descriptions.Item>
             <Descriptions.Item label="Payment">
-              <Tag color={paymentTypeColors[selectedOrder.payment_type]}>
-                {selectedOrder.payment_type?.replace('_', ' ').toUpperCase()}
+              <Tag color={paymentTypeColors[selectedOrder.paymentType]}>
+                {selectedOrder.paymentType?.replace('_', ' ').toUpperCase()}
               </Tag>
             </Descriptions.Item>
           </Descriptions>
@@ -548,7 +550,7 @@ const OrdersPage = () => {
 
       {/* Reject Modal */}
       <Modal
-        title={`Reject Order ${selectedOrder?.order_number}`}
+        title={`Reject Order ${selectedOrder?.orderNumber}`}
         open={rejectModalOpen}
         onCancel={() => {
           setRejectModalOpen(false);
@@ -573,7 +575,7 @@ const OrdersPage = () => {
 
       {/* Ship Modal */}
       <Modal
-        title={`Ship Order ${selectedOrder?.order_number}`}
+        title={`Ship Order ${selectedOrder?.orderNumber}`}
         open={shipModalOpen}
         onCancel={() => {
           setShipModalOpen(false);
