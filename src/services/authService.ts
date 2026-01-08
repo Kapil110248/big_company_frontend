@@ -8,7 +8,7 @@ const API_URL =
   (window.location.hostname === "localhost" ||
     window.location.hostname === "127.0.0.1")
     ? "https://big-pos-backend-production.up.railway.app"
-    : "https://bigcompany-api.alexandratechlab.com");
+    : "https://big-pos-backend-production.up.railway.app");
 
 // Role-specific endpoints (admin uses separate internal authentication)
 const AUTH_ENDPOINTS: Record<UserRole, string> = {
